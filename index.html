@@ -84,13 +84,19 @@ function generate(){
 }
 
 function pay(){
-    let text = document.getElementById("input").value;
+    let content = document.getElementById("output").innerText;
 
-    let message = encodeURIComponent(
-        "Hello, I want to get my PDF.\n\nRequest:\n" + text
-    );
+    if(!content){
+        alert("Generate document first!");
+        return;
+    }
 
-    window.open("https://wa.me/201XXXXXXXXX?text=" + message);
+    let blob = new Blob([content], { type: "application/pdf" });
+    let link = document.createElement("a");
+
+    link.href = URL.createObjectURL(blob);
+    link.download = "dark-docs.pdf";
+    link.click();
 }
 
 </script>
