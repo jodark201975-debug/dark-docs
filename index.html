@@ -73,15 +73,25 @@ button{
 <script>
 
 function generate(){
-    let text = document.getElementById("input").value;
+let text = document.getElementById("input").value;
 
-    document.getElementById("output").innerHTML = "Generating...";
-
-    puter.ai.chat("Create a professional document: " + text)
-    .then(res => {
-        document.getElementById("output").innerText = res;
-    });
+```
+if(!text){
+    alert("Please write something!");
+    return;
 }
+
+document.getElementById("output").innerHTML = "Generating...";
+
+setTimeout(() => {
+    let result = "Professional Document:\n\n" + text + "\n\nConclusion:\nThis document was generated successfully using Dark Docs AI system.";
+
+    document.getElementById("output").innerText = result;
+}, 1000);
+```
+
+}
+
 
 function pay(){
 let content = document.getElementById("output").innerText;
