@@ -2,50 +2,45 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>Dark Docs Pro</title>
+<title>Dark AI Docs Pro</title>
 
-<!-- مكتبة PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
 body{
-    font-family: Arial;
     background:#0f172a;
     color:white;
+    font-family:Tahoma;
     text-align:center;
-    padding:40px;
+    padding:30px;
 }
 .container{
-    max-width:700px;
+    max-width:800px;
     margin:auto;
 }
 textarea{
     width:100%;
     height:150px;
-    padding:10px;
     border-radius:10px;
-    border:none;
+    padding:10px;
 }
-button{
-    margin-top:15px;
-    padding:12px 20px;
-    background:#22c55e;
-    color:white;
+select,button{
+    margin-top:10px;
+    padding:10px;
     border:none;
     border-radius:8px;
-    cursor:pointer;
-    font-size:16px;
 }
-button:hover{
-    background:#16a34a;
+button{
+    background:#22c55e;
+    color:white;
+    cursor:pointer;
 }
 #output{
-    margin-top:20px;
     background:white;
     color:black;
     padding:20px;
     border-radius:10px;
-    min-height:120px;
+    margin-top:20px;
     text-align:right;
 }
 </style>
@@ -56,47 +51,71 @@ button:hover{
 
 <div class="container">
 
-<h1>🚀 Dark Docs Pro</h1>
+<h1>🔥 Dark AI Docs Pro</h1>
 
-<textarea id="input" placeholder="اكتب طلبك هنا..."></textarea>
+<textarea id="input" placeholder="اكتب طلبك (قصة - مقال - سيناريو)..."></textarea>
 
 <br>
 
-<button onclick="generate()">✨ Generate</button>
+<select id="type">
+<option value="article">مقال احترافي</option>
+<option value="story">قصة</option>
+<option value="cinematic">برومبت سينمائي</option>
+</select>
+
+<br>
+
+<button onclick="generate()">✨ Generate AI</button>
 
 <div id="output"></div>
 
-<button onclick="downloadPDF()">📥 Download PDF</button>
+<button onclick="downloadPDF()">📥 تحميل PDF</button>
 
 </div>
 
 <script>
 
-function generate(){
+async function generate(){
 
 let text = document.getElementById("input").value;
+let type = document.getElementById("type").value;
 
 if(!text){
-    alert("اكتب حاجة الأول");
+    alert("اكتب حاجة");
     return;
 }
 
-let result = `
-<h2 style="color:#16a34a;">📄 مستند احترافي</h2>
+let prompt = "";
 
-<p><strong>📌 الموضوع:</strong> ${text}</p>
+if(type==="article"){
+prompt = "اكتب مقال احترافي للنشر على امازون KDP عن: " + text;
+}
+else if(type==="story"){
+prompt = "اكتب قصة مشوقة وجذابة عن: " + text;
+}
+else{
+prompt = "اكتب برومبت سينمائي احترافي جدا بالتفاصيل (كاميرا، اضاءة، مشاهد) عن: " + text;
+}
 
-<p><strong>📖 المحتوى:</strong><br>
-هذا تقرير احترافي تم إنشاؤه تلقائيًا باستخدام نظام Dark Docs Pro.
-يتميز بالتنظيم والدقة وسهولة القراءة.
-</p>
+let response = await fetch("https://api.openai.com/v1/chat/completions",{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer YOUR_API_KEY"
+},
+body:JSON.stringify({
+model:"gpt-4o-mini",
+messages:[
+{role:"user",content:prompt}
+]
+})
+});
 
-<p><strong>✅ الخلاصة:</strong><br>
-تم إنشاء المستند بنجاح ويمكن استخدامه بشكل رسمي.
-</p>
-`;
+let data = await response.json();
 
-document.getElementById("output").innerHTML = result;
+let result = data.choices[0].message.content;
+
+document.getElementById("output").innerText = result;
 
 }
 
@@ -105,22 +124,18 @@ async function downloadPDF(){
 let content = document.getElementById("output").innerText;
 
 if(!content){
-    alert("اعمل Generate الأول");
-    return;
+alert("اعمل Generate الأول");
+return;
 }
 
 const { jsPDF } = window.jspdf;
 const doc = new jsPDF();
 
-doc.setFont("Arial");
-doc.setFontSize(14);
-
-// تقسيم النص علشان ينزل صح في PDF
 let lines = doc.splitTextToSize(content, 180);
 
 doc.text(lines, 10, 10);
 
-doc.save("DarkDocs.pdf");
+doc.save("KDP-Book.pdf");
 
 }
 
