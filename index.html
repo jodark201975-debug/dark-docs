@@ -92,20 +92,32 @@ if(!content){
     return;
 }
 
-let win = window.open('', '', 'height=700,width=700');
-win.document.write('<html><head><title>Dark Docs</title>');
-win.document.write('<style>body{font-family:Arial;padding:40px;} h1{color:#5a3e2b;}</style>');
-win.document.write('</head><body>');
-win.document.write('<h1>Dark Docs Document</h1>');
-win.document.write('<hr>');
-win.document.write('<p>' + content.replace(/\n/g, "<br>") + '</p>');
-win.document.write('</body></html>');
-win.document.close();
+let newWindow = document.createElement("iframe");
+newWindow.style.display = "none";
+document.body.appendChild(newWindow);
 
-win.print();
+newWindow.contentDocument.write(`
+    <html>
+    <head>
+    <title>Dark Docs</title>
+    <style>
+    body{font-family:Arial;padding:40px;}
+    h1{color:#5a3e2b;}
+    </style>
+    </head>
+    <body>
+    <h1>Dark Docs Document</h1>
+    <hr>
+    <p>${content.replace(/\n/g, "<br>")}</p>
+    </body>
+    </html>
+`);
+
+newWindow.contentWindow.print();
 ```
 
 }
+
 
 
     let blob = new Blob([content], { type: "application/pdf" });
