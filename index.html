@@ -73,19 +73,22 @@ function generate(){
 }
 
 function downloadPDF(){
-    let content = document.getElementById("output").innerText;
+let content = document.getElementById("output").innerText;
 
-    if(!content){
-        alert("اعمل Generate الأول");
-        return;
-    }
+```
+if(!content){
+    alert("اعمل Generate الأول");
+    return;
+}
 
-    let blob = new Blob([content], { type: "text/plain" });
-    let link = document.createElement("a");
+let element = document.createElement("a");
+let file = new Blob([content], {type: 'application/pdf'});
+element.href = URL.createObjectURL(file);
+element.download = "dark-docs.pdf";
+document.body.appendChild(element);
+element.click();
+```
 
-    link.href = URL.createObjectURL(blob);
-    link.download = "dark-docs.txt";
-    link.click();
 }
 
 </script>
