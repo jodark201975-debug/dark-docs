@@ -60,20 +60,39 @@ button{
 <script>
 
 function generate(){
-    let text = document.getElementById("input").value;
+let text = document.getElementById("input").value;
 
-    if(!text){
-        alert("اكتب حاجة الأول");
-        return;
-    }
+```
+if(!text){
+    alert("اكتب حاجة الأول");
+    return;
+}
 
-    document.getElementById("output").innerText =
-    "📄 مستند احترافي:\n\n" + text +
-    "\n\n✅ تم الإنشاء بنجاح";
+document.getElementById("output").innerHTML = `
+<h2 style="color:#5a3e2b;">📄 مستند احترافي</h2>
+
+<h3>📌 الموضوع:</h3>
+<p>${text}</p>
+
+<h3>📖 المحتوى:</h3>
+<p>
+هذا مستند احترافي تم إنشاؤه باستخدام نظام Dark Docs.  
+يحتوي على معلومات منظمة وتنسيق واضح يسهل قراءته واستخدامه.
+</p>
+
+<h3>✅ الخلاصة:</h3>
+<p>
+تم إنشاء هذا المستند بنجاح ويمكن استخدامه بشكل رسمي أو عملي.
+</p>
+`;
+```
+
+}
+
 }
 
 function downloadPDF(){
-let content = document.getElementById("output").innerText;
+let content = document.getElementById("output").innerHTML;
 
 ```
 if(!content){
@@ -81,12 +100,24 @@ if(!content){
     return;
 }
 
-let element = document.createElement("a");
-let file = new Blob([content], {type: 'application/pdf'});
-element.href = URL.createObjectURL(file);
-element.download = "dark-docs.pdf";
-document.body.appendChild(element);
-element.click();
+let win = window.open('', '', 'width=800,height=600');
+win.document.write(`
+    <html>
+    <head>
+    <title>Dark Docs</title>
+    <style>
+    body{font-family:Arial;padding:40px;line-height:1.8;}
+    h2{color:#5a3e2b;}
+    </style>
+    </head>
+    <body>
+    ${content}
+    </body>
+    </html>
+`);
+
+win.document.close();
+win.print();
 ```
 
 }
