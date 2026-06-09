@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <title>Dark AI Docs Pro</title>
 
+<!-- PDF + Screenshot -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
 body{
@@ -42,6 +44,7 @@ button{
     border-radius:10px;
     margin-top:20px;
     text-align:right;
+    direction:rtl;
 }
 </style>
 
@@ -65,7 +68,7 @@ button{
 
 <br>
 
-<button onclick="generate()">✨ Generate AI</button>
+<button onclick="generate()">✨ Generate</button>
 
 <div id="output"></div>
 
@@ -85,57 +88,50 @@ if(!text){
     return;
 }
 
-let prompt = "";
+let result = "";
 
 if(type==="article"){
-prompt = "اكتب مقال احترافي للنشر على امازون KDP عن: " + text;
+result = `
+<h2>📄 مقال احترافي</h2>
+<p><strong>الموضوع:</strong> ${text}</p>
+<p>هذا مقال احترافي مكتوب بشكل منظم وجاهز للنشر. يمكنك تطويره لاحقًا وربطه بالذكاء الاصطناعي.</p>
+`;
 }
 else if(type==="story"){
-prompt = "اكتب قصة مشوقة وجذابة عن: " + text;
+result = `
+<h2>📖 قصة</h2>
+<p>في عالم غامض، بدأت قصة حول: ${text}، حيث تتصاعد الأحداث بشكل مشوق...</p>
+`;
 }
 else{
-prompt = "اكتب برومبت سينمائي احترافي جدا بالتفاصيل (كاميرا، اضاءة، مشاهد) عن: " + text;
+result = `
+<h2>🎬 برومبت سينمائي</h2>
+<p>لقطة سينمائية لـ ${text}، إضاءة درامية، كاميرا متحركة، تفاصيل عالية الجودة، جو سينمائي احترافي.</p>
+`;
 }
 
-let response = await fetch("https://api.openai.com/v1/chat/completions",{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-"Authorization":"Bearer YOUR_API_KEY"
-},
-body:JSON.stringify({
-model:"gpt-4o-mini",
-messages:[
-{role:"user",content:prompt}
-]
-})
-});
-
-let data = await response.json();
-
-let result = data.choices[0].message.content;
-
-document.getElementById("output").innerText = result;
+document.getElementById("output").innerHTML = result;
 
 }
 
 async function downloadPDF(){
 
-let content = document.getElementById("output").innerText;
+let element = document.getElementById("output");
 
-if(!content){
+if(!element.innerText){
 alert("اعمل Generate الأول");
 return;
 }
 
+const canvas = await html2canvas(element);
+const imgData = canvas.toDataURL("image/png");
+
 const { jsPDF } = window.jspdf;
-const doc = new jsPDF();
+const pdf = new jsPDF();
 
-let lines = doc.splitTextToSize(content, 180);
+pdf.addImage(imgData, 'PNG', 10, 10, 180, 0);
 
-doc.text(lines, 10, 10);
-
-doc.save("KDP-Book.pdf");
+pdf.save("DarkDocs.pdf");
 
 }
 
