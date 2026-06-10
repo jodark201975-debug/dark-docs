@@ -88,32 +88,45 @@ if(!text){
     return;
 }
 
-let result = "";
+document.getElementById("output").innerHTML = "⏳ جاري التوليد...";
+
+let prompt = "";
 
 if(type==="article"){
-result = `
-<h2>📄 مقال احترافي</h2>
-<p><strong>الموضوع:</strong> ${text}</p>
-<p>هذا مقال احترافي مكتوب بشكل منظم وجاهز للنشر. يمكنك تطويره لاحقًا وربطه بالذكاء الاصطناعي.</p>
-`;
+    prompt = `اكتب مقال احترافي عن: ${text}`;
 }
 else if(type==="story"){
-result = `
-<h2>📖 قصة</h2>
-<p>في عالم غامض، بدأت قصة حول: ${text}، حيث تتصاعد الأحداث بشكل مشوق...</p>
-`;
+    prompt = `اكتب قصة مشوقة عن: ${text}`;
 }
 else{
-result = `
-<h2>🎬 برومبت سينمائي</h2>
-<p>لقطة سينمائية لـ ${text}، إضاءة درامية، كاميرا متحركة، تفاصيل عالية الجودة، جو سينمائي احترافي.</p>
-`;
+    prompt = `اكتب وصف سينمائي احترافي لـ: ${text}`;
 }
 
-document.getElementById("output").innerHTML = result;
+try{
+    let response = await fetch("https://api-inference.huggingface.co/models/google/flan-t5-large",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            inputs: prompt
+        })
+    });
 
+    let data = await response.json();
+
+    let result = data[0]?.generated_text || "حصل خطأ";
+
+    document.getElementById("output").innerHTML = `
+    <h2>✨ النتيجة</h2>
+    <p>${result}</p>
+    `;
+
+}catch(e){
+    document.getElementById("output").innerHTML = "❌ فشل الاتصال";
 }
 
+}
 async function downloadPDF(){
 
 let element = document.getElementById("output");
