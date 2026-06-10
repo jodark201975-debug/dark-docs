@@ -96,26 +96,27 @@ if(type==="article"){
     prompt = `اكتب مقال احترافي عن: ${text}`;
 }
 else if(type==="story"){
-    prompt = `اكتب قصة مشوقة عن: ${text}`;
+    prompt = `اكتب قصة قصيرة للأطفال عن: ${text}`;
 }
 else{
     prompt = `اكتب وصف سينمائي احترافي لـ: ${text}`;
 }
 
 try{
-    let response = await fetch("https://api-inference.huggingface.co/models/google/flan-t5-large",{
+    let response = await fetch("https://api.affiliateplus.xyz/api/chatbot",{
         method:"POST",
         headers:{
             "Content-Type":"application/json"
         },
         body:JSON.stringify({
-            inputs: prompt
+            message: prompt,
+            user: "dark_user"
         })
     });
 
     let data = await response.json();
 
-    let result = data[0]?.generated_text || "حصل خطأ";
+    let result = data.message || "حصل خطأ";
 
     document.getElementById("output").innerHTML = `
     <h2>✨ النتيجة</h2>
